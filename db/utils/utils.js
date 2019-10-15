@@ -28,8 +28,17 @@ exports.formatComments = (comments, articleRef) => {
       return newObj;
     });
   };
-  const changedTitles = renameKeys(comments, "belongs_to", "article_id");
-  const formattedDates = exports.formatDates(changedTitles);
+  const changedBelongsToToArticleId = renameKeys(
+    comments,
+    "belongs_to",
+    "article_id"
+  );
+  const changedCreateByToAuthor = renameKeys(
+    changedBelongsToToArticleId,
+    "created_by",
+    "author"
+  );
+  const formattedDates = exports.formatDates(changedCreateByToAuthor);
   return formattedDates.map(comment => {
     comment.article_id = refObj[comment.article_id];
     return comment;
