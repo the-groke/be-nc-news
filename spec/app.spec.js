@@ -73,6 +73,24 @@ describe("/api", () => {
           expect(body.articles.length).to.equal(12);
         });
     });
+    it("responds with an array of article objects which contain a comment_count property", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          for (let i = 0; i < articles.length; i++) {
+            expect(articles[i]).to.haveOwnProperty(comment_count);
+          }
+        });
+    });
+    it("comment count has value of number of comments on each article", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles[0].comment_count).to.equal(7);
+        });
+    });
     it("articles array is sorted by date as a default and in descending order", () => {
       return request(app)
         .get("/api/articles")
@@ -202,8 +220,24 @@ describe("/api", () => {
   });
   describe("/comments", () => {
     describe("/:comment_id", () => {
-      describe("PATCH", () => {});
-      describe("DELETE", () => {});
+      describe("PATCH", () => {
+        it("responds with status 200 and updated comment", () => {
+          return request(app)
+            .patch("/api/comments/1")
+            .send({ inc_votes: 1 })
+            .expect(200)
+            .then(({ body: { comment } }) => {
+              expect(article[0].votes).to.equal(101);
+            });
+        });
+      });
+      describe("DELETE", () => {
+        it("responds with status 204", () => {
+          return request(app)
+            .delete("/api/comments/1")
+            .expect(204);
+        });
+      });
     });
   });
 });

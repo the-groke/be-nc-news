@@ -17,7 +17,10 @@ exports.getArticle = (req, res, next) => {
 exports.getArticles = (req, res, next) => {
   const sortBy = req.query.sort_by;
   const order = req.query.order;
-  selectAllArticles(sortBy, order)
+  const author = req.query.author;
+  const topic = req.query.topic;
+
+  selectAllArticles(sortBy, order, author, topic)
     .then(articles => {
       if (articles.length === 0) {
         return Promise.reject({ status: 404, msg: "article does not exist" });

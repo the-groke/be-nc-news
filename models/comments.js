@@ -1,6 +1,12 @@
 const connection = require("../db/connection");
 
-exports.selectCommentsByArticleId = (id, sortBy = "comments_id", order) => {
+exports.selectCommentsByArticleId = (
+  id,
+  sortBy = "comments_id",
+  order,
+  author,
+  topic
+) => {
   return connection
     .select("*")
     .from("comments")
