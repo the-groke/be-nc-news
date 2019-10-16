@@ -29,13 +29,10 @@ exports.getComments = (req, res, next) => {
 
 exports.patchComment = (req, res, next) => {
   const incVotes = req.body.inc_votes;
-  const commentId = req.params.comment_id;
-  console.log(commentId, incVotes);
+  const commentsId = req.params.comment_id;
 
-  updateComment(commentId, incVotes)
+  updateComment(commentsId, incVotes)
     .then(comment => {
-      console.log(comment);
-
       if (comment.length === 0) {
         return Promise.reject({ status: 404, msg: "comment does not exist" });
       } else {

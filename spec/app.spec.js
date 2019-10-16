@@ -73,7 +73,7 @@ describe("/api", () => {
           expect(body.articles.length).to.equal(12);
         });
     });
-    it("responds with an array of article objects which contain a comment_count property", () => {
+    it("responds with an array of article objects, which contain a comment_count property", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
@@ -220,14 +220,14 @@ describe("/api", () => {
   });
   describe("/comments", () => {
     describe("/:comment_id", () => {
-      describe.only("PATCH", () => {
+      describe("PATCH", () => {
         it("responds with status 200 and updated comment", () => {
           return request(app)
             .patch("/api/comments/1")
             .send({ inc_votes: 1 })
             .expect(200)
             .then(({ body: { comment } }) => {
-              expect(article[0].votes).to.equal(101);
+              expect(comment[0].votes).to.equal(17);
             });
         });
       });

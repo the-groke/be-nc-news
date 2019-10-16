@@ -14,9 +14,9 @@ exports.selectCommentsByArticleId = (
     .orderBy(sortBy, order);
 };
 
-exports.updateComment = (commentId, incVotes) => {
+exports.updateComment = (commentsId, incVotes) => {
   return connection("comments")
-    .where("comments.comment_id", "=", commentId)
+    .where("comments.comments_id", "=", commentsId)
     .increment("votes", incVotes)
     .returning("*");
 };
