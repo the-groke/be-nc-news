@@ -73,7 +73,7 @@ describe("/api", () => {
           expect(body.articles.length).to.equal(12);
         });
     });
-    it("responds with an array of article objects, which contain a comment_count property", () => {
+    it("responds with an array of article objects which contain a comment_count property", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
@@ -149,10 +149,21 @@ describe("/api", () => {
               );
             });
         });
-        it("articles object contains comment count", () => {
+        it("article object contains comment count", () => {
           return request(app)
-            .get("/api/articles/1")
-            .then(({ body }) => {});
+            .get("/api/article")
+            .expect(200)
+            .then(({ body: { article } }) => {
+              expect(articles[0]).to.haveOwnProperty(comment_count);
+            });
+        });
+        it("comment count has value of number of comments on article", () => {
+          return request(app)
+            .get("/api/article")
+            .expect(200)
+            .then(({ body: { article } }) => {
+              expect(article[0].comment_count).to.equal(7);
+            });
         });
         it("responds with status 404 when requested non-existent valid article id ", () => {
           return request(app)

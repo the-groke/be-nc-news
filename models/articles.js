@@ -11,11 +11,20 @@ exports.selectArticleById = articleId => {
     .where("article_id", articleId);
 };
 
-exports.selectAllArticles = (sortBy = "created_at", order = "desc") => {
+exports.selectAllArticles = (
+  sortBy = "created_at",
+  order = "desc",
+  author,
+  topic
+) => {
   return connection
-    .select("*")
+    .select("articles.*")
     .from("articles")
-    .orderBy(sortBy, order);
+    .orderBy(sortBy, order)
+    .modify(query => {
+      if (author) query.where({ author });
+      if (topic) query.where({ topic });
+    });
 };
 
 exports.updateArticle = (articleId, incVotes) => {
