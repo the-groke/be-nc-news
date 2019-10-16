@@ -43,6 +43,10 @@ exports.patchComment = (req, res, next) => {
 };
 
 exports.deleteComment = (req, res, next) => {
-  const commentId = req.params.id;
-  removeComment(commentId);
+  const commentId = req.params.comment_id;
+  removeComment(commentId)
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch(next);
 };
