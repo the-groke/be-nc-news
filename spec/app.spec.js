@@ -129,7 +129,7 @@ describe("/api", () => {
           });
           it("comments array is sorted by given column", () => {
             return request(app)
-              .get("/api/articles/1/comments?sort_by=username")
+              .get("/api/articles/1/comments?sort_by=author")
               .then(({ body }) => {
                 expect(body.comments).to.be.sortedBy("username");
               });
