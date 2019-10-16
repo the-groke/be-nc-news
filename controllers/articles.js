@@ -11,9 +11,11 @@ exports.getArticle = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  selectAllArticles().then(articles => {
-    if (articles.length === 0) {
-      return Promise.reject({ status: 404, msg: "article does not exist" });
-    } else res.status(200).send({ articles });
-  });
+  selectAllArticles()
+    .then(articles => {
+      if (articles.length === 0) {
+        return Promise.reject({ status: 404, msg: "article does not exist" });
+      } else res.status(200).send({ articles });
+    })
+    .catch(next);
 };

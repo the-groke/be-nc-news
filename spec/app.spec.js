@@ -110,12 +110,35 @@ describe("/api", () => {
         });
       });
       describe("PATCH", () => {});
+      describe("/comments", () => {
+        describe("POST", () => {});
+        describe("GET", () => {
+          it("responds with status 200 and array of comments", () => {
+            return request(app)
+              .get("/api/articles/1/comments")
+              .then(({ body }) => {
+                expect(body.comments.length).to.equal(13);
+              });
+          });
+          it("comments array is sorted by comment_id as a default", () => {
+            return request(app)
+              .get("/api/articles/1/comments")
+              .then(({ body }) => {
+                expect(body.comments).to.be.sortedBy("comments_id");
+              });
+          });
+          it("comments array is sorted by given column", () => {
+            return request(app)
+              .get("/api/articles/1/comments?sort_by=username")
+              .then(({ body }) => {
+                expect(body.comments).to.be.sortedBy("username");
+              });
+          });
+        });
+      });
     });
-    describe("/comments", () => {
-      describe("POST", () => {});
-      describe("GET", () => {});
-    });
-
+  });
+  describe("/comments", () => {
     describe("/:comment_id", () => {
       describe("PATCH", () => {});
       describe("DELETE", () => {});
