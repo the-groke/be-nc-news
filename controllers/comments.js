@@ -12,9 +12,10 @@ exports.getComments = (req, res, next) => {
     });
   };
   const id = req.params.article_id;
-  sortBy = req.query.sort_by;
+  const sortBy = req.query.sort_by;
+  const order = req.query.order;
 
-  selectCommentsByArticleId(id, sortBy)
+  selectCommentsByArticleId(id, sortBy, order)
     .then(comments => {
       authorToUsername = renameKeys(comments, "author", "username");
       res.status(200).send({ comments: authorToUsername });

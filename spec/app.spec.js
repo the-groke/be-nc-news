@@ -120,18 +120,32 @@ describe("/api", () => {
                 expect(body.comments.length).to.equal(13);
               });
           });
-          it("comments array is sorted by comment_id as a default", () => {
+          it("comments array is sorted by comment_id as a default and in ascending order", () => {
             return request(app)
               .get("/api/articles/1/comments")
+              .expect(200)
               .then(({ body }) => {
-                expect(body.comments).to.be.sortedBy("comments_id");
+                expect(body.comments).to.be.sortedBy("comments_id", {
+                  descending: false
+                });
               });
           });
           it("comments array is sorted by given column", () => {
             return request(app)
-              .get("/api/articles/1/comments?sort_by=author")
+              .get("/api/articles/1/comments?sort_by=created_at")
+              .expect(200)
               .then(({ body }) => {
-                expect(body.comments).to.be.sortedBy("username");
+                expect(body.comments).to.be.sortedBy("created_at");
+              });
+          });
+          it("comments array is sorted in descending order when passed desc as query", () => {
+            return request(app)
+              .get("/api/articles/1/comments?order=desc")
+              .expect(200)
+              .then(({ body }) => {
+                expect(body.comments).to.be.sortedBy("comments_id", {
+                  descending: true
+                });
               });
           });
         });
