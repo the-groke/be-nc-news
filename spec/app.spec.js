@@ -220,7 +220,7 @@ describe("/api", () => {
   });
   describe("/comments", () => {
     describe("/:comment_id", () => {
-      describe("PATCH", () => {
+      describe.only("PATCH", () => {
         it("responds with status 200 and updated comment", () => {
           return request(app)
             .patch("/api/comments/1")
