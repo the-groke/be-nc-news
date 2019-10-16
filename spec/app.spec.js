@@ -70,15 +70,53 @@ describe("/api", () => {
         .get("/api/articles")
         .expect(200)
         .then(({ body }) => {
-          expect(body.articles[0]).to.eql({
-            article_id: 1,
-            title: "Living in the shadow of a great man",
-            body: "I find this existence challenging",
-            votes: 100,
-            topic: "mitch",
-            author: "butter_bridge",
-            created_at: "2018-11-15T12:21:54.171Z"
+          expect(body.articles.length).to.equal(12);
+        });
+    });
+    it("articles array is sorted by date as a default and in descending order", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).to.be.sortedBy("created_at", {
+            descending: true
           });
+        });
+    });
+    it("articles array is sorted by given column", () => {
+      return request(app)
+        .get("/api/articles?sort_by=body")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).to.be.sortedBy("body", {
+            descending: true
+          });
+        });
+    });
+    it("articles array is sorted in descending order when passed desc as query", () => {
+      return request(app)
+        .get("/api/articles?order=asc")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).to.be.sortedBy("created_at", {
+            descending: false
+          });
+        });
+    });
+    it("articles array contains only those by given author in query", () => {
+      return request(app)
+        .get("/api/articles?author=icellusedkars")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles.length).to.equal(6);
+        });
+    });
+    it("articles array contains only those by given topic in query", () => {
+      return request(app)
+        .get("/api/articles?topic=cats")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles.length).to.equal(1);
         });
     });
     describe("/:article_id", () => {
@@ -109,7 +147,17 @@ describe("/api", () => {
             .expect(400);
         });
       });
-      describe("PATCH", () => {});
+      describe("PATCH", () => {
+        it("responds with 200 and updated article", () => {
+          return request(app)
+            .patch("/api/articles/1")
+            .send({ inc_votes: 1 })
+            .expect(200)
+            .then(({ body: { article } }) => {
+              expect(article[0].votes).to.equal(101);
+            });
+        });
+      });
       describe("/comments", () => {
         describe("POST", () => {});
         describe("GET", () => {

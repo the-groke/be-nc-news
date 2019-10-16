@@ -11,6 +11,16 @@ exports.selectArticleById = articleId => {
     .where("article_id", articleId);
 };
 
-exports.selectAllArticles = () => {
-  return connection.select("*").from("articles");
+exports.selectAllArticles = (sortBy = "created_at", order = "desc") => {
+  return connection
+    .select("*")
+    .from("articles")
+    .orderBy(sortBy, order);
+};
+
+exports.updateArticle = (articleId, incVotes) => {
+  return connection("articles")
+    .where("articles.article_id", "=", articleId)
+    .increment("votes", incVotes)
+    .returning("*");
 };
