@@ -235,6 +235,12 @@ describe("/api", () => {
                 );
               });
           });
+          it("returns status 400 when given comment not formatted correctly", () => {
+            return request(app)
+              .post("/api/articles/1/comments")
+              .send({ pizza: "rogersop", body: "hello" })
+              .expect(400);
+          });
         });
         describe("GET", () => {
           it("responds with status 200 and array of comments", () => {
