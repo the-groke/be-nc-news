@@ -20,8 +20,24 @@ exports.getArticles = (req, res, next) => {
   const author = req.query.author;
   const topic = req.query.topic;
 
+  validQueries = ["sort_by", "order", "author", "topic"];
+
+  // if (req.query) {
+  //   for (let i = 0; i < Object.keys(req.query).length; i++) {
+  //     if (!validQueries.includes(Object.keys(req.query)[i])) {
+  //       Promise.reject({ status: 400, msg: "bad request" });
+  //     }
+  //   }
+  // }
+
   selectAllArticles(sortBy, order, author, topic)
     .then(articles => {
+      if (order) {
+        if (order !== "asc" && order !== "desc")
+          return Promise.reject({ status: 400, msg: "bad request" });
+      }
+      // if (req.query) console.log(req.query);
+
       if (articles.length === 0) {
         return Promise.reject({ status: 404, msg: "article does not exist" });
       } else res.status(200).send({ articles });

@@ -64,79 +64,117 @@ describe("/api", () => {
     });
   });
   describe("/articles", () => {
-    describe("GET", () => {});
-    it("responds with status 200 and an array of article objects", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.articles.length).to.equal(12);
+    describe("GET", () => {
+      describe(":)", () => {
+        it("responds with status 200 and an array of article objects", () => {
+          return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.articles.length).to.equal(12);
+            });
         });
-    });
-    it("responds with an array of article objects which contain a comment_count key", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then(({ body: { articles } }) => {
-          for (let i = 0; i < articles.length; i++) {
-            expect(articles[i]).to.contain.keys("comment_count");
-          }
+        it("responds with an array of article objects which contain a comment_count key", () => {
+          return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              for (let i = 0; i < articles.length; i++) {
+                expect(articles[i]).to.contain.keys("comment_count");
+              }
+            });
         });
-    });
-    it("comment count has value of number of comments on each article", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then(({ body: { articles } }) => {
-          expect(articles[0].comment_count).to.equal("13");
+        it("comment count has value of number of comments on each article", () => {
+          return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              expect(articles[0].comment_count).to.equal("13");
+            });
         });
-    });
-    it("articles array is sorted by date as a default and in descending order", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.articles).to.be.sortedBy("created_at", {
-            descending: true
-          });
+        it("articles array is sorted by date as a default and in descending order", () => {
+          return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.articles).to.be.sortedBy("created_at", {
+                descending: true
+              });
+            });
         });
-    });
-    it("articles array is sorted by given column", () => {
-      return request(app)
-        .get("/api/articles?sort_by=body")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.articles).to.be.sortedBy("body", {
-            descending: true
-          });
+        it("articles array is sorted by given column", () => {
+          return request(app)
+            .get("/api/articles?sort_by=body")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.articles).to.be.sortedBy("body", {
+                descending: true
+              });
+            });
         });
-    });
-    it("articles array is sorted in descending order when passed desc as query", () => {
-      return request(app)
-        .get("/api/articles?order=asc")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.articles).to.be.sortedBy("created_at", {
-            descending: false
-          });
+        it("articles array is sorted in descending order when passed desc as query", () => {
+          return request(app)
+            .get("/api/articles?order=asc")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.articles).to.be.sortedBy("created_at", {
+                descending: false
+              });
+            });
         });
-    });
-    it("articles array contains only those by given author in query", () => {
-      return request(app)
-        .get("/api/articles?author=icellusedkars")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.articles.length).to.equal(6);
+        it("articles array contains only those by given author in query", () => {
+          return request(app)
+            .get("/api/articles?author=icellusedkars")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.articles.length).to.equal(6);
+            });
         });
-    });
-    it("articles array contains only those by given topic in query", () => {
-      return request(app)
-        .get("/api/articles?topic=cats")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.articles.length).to.equal(1);
+        it("articles array contains only those by given topic in query", () => {
+          return request(app)
+            .get("/api/articles?topic=cats")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.articles.length).to.equal(1);
+            });
         });
+      });
+      describe(":(", () => {
+        it("responds with 404 when sorted by invalid column", () => {
+          return request(app)
+            .get("/api/articles?sort_by=pizza")
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.equal("bad request");
+            });
+        });
+        it("responds with 400 when given invalid order query", () => {
+          return request(app)
+            .get("/api/articles?order=pizza")
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.equal("bad request");
+            });
+        });
+        it("responds with 404 when given non-existant author", () => {
+          return request(app)
+            .get("/api/articles?author=steve")
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.equal("not found");
+            });
+        });
+        it("responds with 404 when given non-existant topic", () => {
+          return request(app)
+            .get("/api/articles?topic=steve")
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.equal("not found");
+            });
+        });
+      });
     });
+
     describe("/:article_id", () => {
       describe("GET", () => {
         it("responds with status 200 and requested article object", () => {
@@ -240,6 +278,41 @@ describe("/api", () => {
               .post("/api/articles/1/comments")
               .send({ pizza: "rogersop", body: "hello" })
               .expect(400);
+          });
+          it("", () => {
+            return request(app)
+              .post("/api/articles/1/comments")
+              .send({
+                username: "rogersop",
+                body: "hello",
+                pizza: "margherita"
+              })
+              .expect(400)
+              .then(({ body }) => {
+                expect(body.msg).to.equal("bad request");
+              });
+          });
+          it("responds with status 400 when posting to correctly formatted article id that doesn't exist", () => {
+            return request(app)
+              .post("/api/articles/99/comments")
+              .send({
+                username: "rogersop",
+                body: "hello",
+                pizza: "margherita"
+              })
+              .expect(400)
+              .then(({ body }) => {
+                expect(body.msg).to.equal("bad request");
+              });
+          });
+          it("responds with status 400 when not given enough data", () => {
+            return request(app)
+              .post("/api/articles/1/comments")
+              .send({})
+              .expect(400)
+              .then(({ body }) => {
+                expect(body.msg).to.equal("bad request");
+              });
           });
         });
         describe("GET", () => {
