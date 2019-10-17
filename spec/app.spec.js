@@ -73,13 +73,13 @@ describe("/api", () => {
           expect(body.articles.length).to.equal(12);
         });
     });
-    it("responds with an array of article objects which contain a comment_count property", () => {
+    it("responds with an array of article objects which contain a comment_count key", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
         .then(({ body: { articles } }) => {
           for (let i = 0; i < articles.length; i++) {
-            expect(articles[i]).to.haveOwnProperty(comment_count);
+            expect(articles[i]).to.contain.keys("comment_count");
           }
         });
     });
@@ -88,7 +88,7 @@ describe("/api", () => {
         .get("/api/articles")
         .expect(200)
         .then(({ body: { articles } }) => {
-          expect(articles[0].comment_count).to.equal(7);
+          expect(articles[0].comment_count).to.equal("13");
         });
     });
     it("articles array is sorted by date as a default and in descending order", () => {
@@ -144,25 +144,31 @@ describe("/api", () => {
             .get("/api/articles/1")
             .expect(200)
             .then(({ body }) => {
-              expect(body.article.title).to.equal(
-                "Living in the shadow of a great man"
+              expect(body.article).to.contain.keys(
+                "article_id",
+                "title",
+                "body",
+                "votes",
+                "topic",
+                "author",
+                "created_at"
               );
             });
         });
         it("article object contains comment count", () => {
           return request(app)
-            .get("/api/article")
+            .get("/api/articles/1")
             .expect(200)
-            .then(({ body: { article } }) => {
-              expect(articles[0]).to.haveOwnProperty(comment_count);
+            .then(({ body }) => {
+              expect(body.article).to.contain.keys("comment_count");
             });
         });
         it("comment count has value of number of comments on article", () => {
           return request(app)
-            .get("/api/article")
+            .get("/api/articles/1")
             .expect(200)
-            .then(({ body: { article } }) => {
-              expect(article[0].comment_count).to.equal(7);
+            .then(({ body }) => {
+              expect(body.article.comment_count).to.equal("13");
             });
         });
         it("responds with status 404 when requested non-existent valid article id ", () => {

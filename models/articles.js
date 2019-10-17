@@ -6,9 +6,12 @@ const connection = require("../db/connection");
 
 exports.selectArticleById = articleId => {
   return connection
-    .select("*")
+    .select("articles.*")
+    .count({ comment_count: "comments.article_id" })
     .from("articles")
-    .where("article_id", articleId);
+    .leftJoin("comments", "articles.article_id", "comments.article_id")
+    .groupBy("articles.article_id")
+    .where("articles.article_id", "=", articleId);
 };
 
 exports.selectAllArticles = (
@@ -19,11 +22,14 @@ exports.selectAllArticles = (
 ) => {
   return connection
     .select("articles.*")
+    .count({ comment_count: "comments.article_id" })
     .from("articles")
+    .leftJoin("comments", "articles.article_id", "comments.article_id")
+    .groupBy("articles.article_id")
     .orderBy(sortBy, order)
     .modify(query => {
-      if (author) query.where({ author });
-      if (topic) query.where({ topic });
+      if (author) query.where("articles.author", "=", author);
+      if (topic) query.where("articles.topic", "=", topic);
     });
 };
 
