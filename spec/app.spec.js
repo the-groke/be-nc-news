@@ -333,6 +333,7 @@ describe("/api", () => {
                 });
               });
           });
+
           it("comments array is sorted by given column", () => {
             return request(app)
               .get("/api/articles/1/comments?sort_by=created_at")
@@ -349,6 +350,22 @@ describe("/api", () => {
                 expect(body.comments).to.be.sortedBy("comments_id", {
                   descending: true
                 });
+              });
+          });
+          it("responds with 404 when sorted by invalid column", () => {
+            return request(app)
+              .get("/api/articles/1/comments?sort_by=pizza")
+              .expect(400)
+              .then(({ body }) => {
+                expect(body.msg).to.equal("bad request");
+              });
+          });
+          it("responds with 400 when given invalid order query", () => {
+            return request(app)
+              .get("/api/articles/1/comments?order=pizza")
+              .expect(400)
+              .then(({ body }) => {
+                expect(body.msg).to.equal("bad request");
               });
           });
         });

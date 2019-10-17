@@ -23,6 +23,10 @@ exports.getComments = (req, res, next) => {
 
   selectCommentsByArticleId(id, sortBy, order)
     .then(comments => {
+      if (order) {
+        if (order !== "asc" && order !== "desc")
+          return Promise.reject({ status: 400, msg: "bad request" });
+      }
       authorToUsername = renameKeys(comments, "author", "username");
       res.status(200).send({ comments: authorToUsername });
     })
