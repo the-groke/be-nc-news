@@ -20,3 +20,9 @@ exports.removeComment = commentsId => {
     .where("comments_id", commentsId)
     .del();
 };
+exports.insertComment = body => {
+  return connection
+    .insert(body)
+    .into("comments")
+    .returning("*");
+};

@@ -35,6 +35,10 @@ exports.patchArticle = (req, res, next) => {
 
   updateArticle(articleId, incVotes)
     .then(article => {
+      if (req.body && !incVotes) {
+        return Promise.reject({ status: 400, msg: "bad request" });
+      }
+
       if (article.length === 0) {
         return Promise.reject({ status: 404, msg: "article does not exist" });
       } else {

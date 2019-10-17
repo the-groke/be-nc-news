@@ -192,9 +192,50 @@ describe("/api", () => {
               expect(article[0].votes).to.equal(101);
             });
         });
+        it("responds with 404 when attempting to update non-existant article", () => {
+          return request(app)
+            .patch("/api/articles/100")
+            .send({ inc_votes: 1 })
+            .expect(404);
+        });
+        it("responds with 400 when not given integer", () => {
+          return request(app)
+            .patch("/api/articles/1")
+            .send({ inc_votes: "hello" })
+            .expect(400);
+        });
+        it("reponds with 400 when given non-existing column", () => {
+          return request(app)
+            .patch("/api/articles/1")
+            .send({ pizza: 1 })
+            .expect(400);
+        });
+        it("responds with 400 when given empty object in body", () => {
+          return request(app)
+            .patch("/api/articles/1")
+            .send({})
+            .expect(400);
+        });
       });
       describe("/comments", () => {
-        describe("POST", () => {});
+        describe("POST", () => {
+          it("returns status 201 and added comment", () => {
+            return request(app)
+              .post("/api/articles/1/comments")
+              .send({ username: "rogersop", body: "hello" })
+              .expect(201)
+              .then(({ body }) => {
+                expect(body.comment).to.contain.keys(
+                  "author",
+                  "body",
+                  "comments_id",
+                  "created_at",
+                  "votes",
+                  "article_id"
+                );
+              });
+          });
+        });
         describe("GET", () => {
           it("responds with status 200 and array of comments", () => {
             return request(app)
@@ -247,12 +288,43 @@ describe("/api", () => {
               expect(comment[0].votes).to.equal(17);
             });
         });
+        it("responds with 404 when attempting to update non-existant comment", () => {
+          return request(app)
+            .patch("/api/comments/100")
+            .send({ inc_votes: 1 })
+            .expect(404);
+        });
+        it("responds with 400 when not given integer", () => {
+          return request(app)
+            .patch("/api/comments/1")
+            .send({ inc_votes: "hello" })
+            .expect(400);
+        });
+        it("reponds with 400 when given non-existing column", () => {
+          return request(app)
+            .patch("/api/comments/1")
+            .send({ pizza: 1 })
+            .expect(400);
+        });
+        it("responds with 400 when given empty object in body", () => {
+          return request(app)
+            .patch("/api/comments/1")
+            .send({})
+            .expect(400);
+        });
       });
       describe("DELETE", () => {
         it("responds with status 204", () => {
           return request(app)
             .delete("/api/comments/1")
             .expect(204);
+        });
+        it("responds with status 404 when trying to delete non-existing comment", () => {
+          it("responds with status 204", () => {
+            return request(app)
+              .delete("/api/comments/100")
+              .expect(404);
+          });
         });
       });
     });
