@@ -8,7 +8,7 @@ exports.handle400s = (err, req, res, next) => {
 };
 
 exports.handle404s = (err, req, res, next) => {
-  const codes = ["42703"];
+  const codes = ["42703", "invalid_author", "invalid_topic"];
   if (codes.includes(err.code) || err.status === 404) {
     res.status(404).send({ msg: "not found" });
   } else {

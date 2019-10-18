@@ -10,7 +10,3 @@ exports.selectUser = username => {
     .from("users")
     .where("username", username);
 };
-
-exports.checkIfUserexists = username => {
-  return connection;
-};

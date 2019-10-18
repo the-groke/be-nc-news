@@ -175,23 +175,24 @@ describe("/api", () => {
               expect(body.articles.length).to.equal(1);
             });
         });
+        it("responds with status 200 and empty array when queried author who has no articles", () => {
+          return request(app)
+            .get("/api/articles?author=lurker")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.articles).to.eql([]);
+            });
+        });
+        it("responds with status 200 and empty array when queried existing topic with no articles", () => {
+          return request(app)
+            .get("/api/articles?topic=paper")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.articles).to.eql([]);
+            });
+        });
       });
-      it("responds with status 200 and empty array when queried author who has no articles", () => {
-        return request(app)
-          .get("/api/articles?author=lurker")
-          .expect(200)
-          .then(({ body }) => {
-            expect(body.articles).to.eql([]);
-          });
-      });
-      it("responds with status 200 and empty array when queried non-existant topic", () => {
-        return request(app)
-          .get("/api/articles?topic=paper")
-          .expect(200)
-          .then(({ body }) => {
-            expect(body.articles.to.eql([]));
-          });
-      });
+
       describe(":(", () => {
         it("responds with 404 when sorted by invalid column", () => {
           return request(app)

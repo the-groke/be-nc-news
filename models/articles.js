@@ -1,4 +1,6 @@
 const connection = require("../db/connection");
+const { selectUser } = require("../models/users");
+const { checkIfTopicExists } = require("../models/topics");
 
 // exports.selectAllTopics = () => {
 //   return connection.select("slug", "description").from("topics");
@@ -20,7 +22,7 @@ exports.selectAllArticles = (
   author,
   topic
 ) => {
-  return connection
+  const articleQuery = connection
     .select("articles.*")
     .count({ comment_count: "comments.article_id" })
     .from("articles")
@@ -30,6 +32,27 @@ exports.selectAllArticles = (
     .modify(query => {
       if (author) query.where("articles.author", "=", author);
       if (topic) query.where("articles.topic", "=", topic);
+    });
+  const promises = [articleQuery];
+  if (author) {
+    const userQuery = selectUser(author).then(users => {
+      if (!users.length) return Promise.reject({ code: "invalid_author" });
+    });
+    promises.push(userQuery);
+  }
+  if (topic) {
+    const topicQuery = checkIfTopicExists(topic).then(topics => {
+      if (!topics.length) return Promise.reject({ code: "invalid_topic" });
+    });
+    promises.push(topicQuery);
+  }
+
+  return Promise.all(promises)
+    .then(response => {
+      return response[0];
+    })
+    .catch(err => {
+      return Promise.reject(err);
     });
 };
 

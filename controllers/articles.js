@@ -33,9 +33,7 @@ exports.getArticles = (req, res, next) => {
         if (order !== "asc" && order !== "desc")
           return Promise.reject({ status: 400, msg: "bad request" });
       }
-      if (articles.length === 0) {
-        return Promise.reject({ status: 404, msg: "article does not exist" });
-      } else res.status(200).send({ articles });
+      res.status(200).send({ articles });
     })
     .catch(next);
 };
