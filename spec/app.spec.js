@@ -10,56 +10,97 @@ beforeEach(() => connection.seed.run());
 after(() => connection.destroy());
 
 describe("/api", () => {
-  it("returns 404 when given invalid url", () => {
-    return request(app)
-      .get("/api/kjshdfgids")
-      .expect(404);
+  describe(":(", () => {
+    it("returns 404 when given invalid url", () => {
+      return request(app)
+        .get("/api/kjshdfgids")
+        .expect(404);
+    });
   });
+
   describe("/topics", () => {
-    describe("GET", () => {
-      it("responds with status 200 and array of topic objects", () => {
-        return request(app)
-          .get("/api/topics")
-          .expect(200)
-          .then(({ body }) => {
-            expect(body.topics).to.eql([
-              {
-                description: "The man, the Mitch, the legend",
-                slug: "mitch"
-              },
-              {
-                description: "Not dogs",
-                slug: "cats"
-              },
-              {
-                description: "what books are made of",
-                slug: "paper"
-              }
-            ]);
-          });
+    describe(":)", () => {
+      describe("GET", () => {
+        it("responds with status 200 and array of topic objects", () => {
+          return request(app)
+            .get("/api/topics")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.topics).to.eql([
+                {
+                  description: "The man, the Mitch, the legend",
+                  slug: "mitch"
+                },
+                {
+                  description: "Not dogs",
+                  slug: "cats"
+                },
+                {
+                  description: "what books are made of",
+                  slug: "paper"
+                }
+              ]);
+            });
+        });
+      });
+    });
+
+    describe("INVALID METHODS", () => {
+      it("responds with status 405 for invalid methods", () => {
+        const invalidMethods = ["patch", "put", "delete"];
+        const methodPromises = invalidMethods.map(method => {
+          return request(app)
+            [method]("/api/topics")
+            .expect(405)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("method not allowed");
+            });
+        });
+        // methodPromises -> [ Promise { <pending> }, Promise { <pending> }, Promise { <pending> } ]
+        return Promise.all(methodPromises);
       });
     });
   });
   describe("/users", () => {
     describe("/:username", () => {
-      it("responds with status 200 and requested user object", () => {
-        return request(app)
-          .get("/api/users/butter_bridge")
-          .expect(200)
-          .then(({ body }) => {
-            expect(body.user).to.eql({
-              username: "butter_bridge",
-              name: "jonny",
-              avatar_url:
-                "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
-            });
+      describe("GET", () => {
+        describe(":)", () => {
+          it("responds with status 200 and requested user object", () => {
+            return request(app)
+              .get("/api/users/butter_bridge")
+              .expect(200)
+              .then(({ body }) => {
+                expect(body.user).to.eql({
+                  username: "butter_bridge",
+                  name: "jonny",
+                  avatar_url:
+                    "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+                });
+              });
           });
+        });
+        describe(":(", () => {
+          it("responds with status 404 for valid but non-existant username", () => {
+            return request(app)
+              .get("/api/users/pizza")
+              .expect(404);
+          });
+        });
       });
-
-      it("responds with status 404 for valid but non-existant username", () => {
-        return request(app)
-          .get("/api/users/pizza")
-          .expect(404);
+      describe("INVALID METHODS", () => {
+        it("repsonds with status 405 for invalid methods", () => {
+          const invalidMethods = ["patch", "put", "delete", "post"];
+          const methodPromises = invalidMethods.map(method => {
+            return request(app)
+              [method]("/api/users/butter_bridge")
+              .expect(405)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("method not allowed");
+              });
+          });
+          // methodPromises -> [ Promise { <pending> }, Promise { <pending> }, Promise { <pending> } ]
+          return Promise.all(methodPromises);
+        });
       });
     });
   });
@@ -174,6 +215,21 @@ describe("/api", () => {
         });
       });
     });
+    describe("INVALID METHODS", () => {
+      it("repsonds with status 405 for invalid methods", () => {
+        const invalidMethods = ["patch", "put", "delete"];
+        const methodPromises = invalidMethods.map(method => {
+          return request(app)
+            [method]("/api/articles")
+            .expect(405)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("method not allowed");
+            });
+        });
+        // methodPromises -> [ Promise { <pending> }, Promise { <pending> }, Promise { <pending> } ]
+        return Promise.all(methodPromises);
+      });
+    });
 
     describe("/:article_id", () => {
       describe("GET", () => {
@@ -253,6 +309,21 @@ describe("/api", () => {
             .patch("/api/articles/1")
             .send({})
             .expect(400);
+        });
+      });
+      describe("INVALID METHODS", () => {
+        it("responds with status 405 for invalid methods", () => {
+          const invalidMethods = ["put", "delete"];
+          const methodPromises = invalidMethods.map(method => {
+            return request(app)
+              [method]("/api/articles/1")
+              .expect(405)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("method not allowed");
+              });
+          });
+          // methodPromises -> [ Promise { <pending> }, Promise { <pending> }, Promise { <pending> } ]
+          return Promise.all(methodPromises);
         });
       });
       describe("/comments", () => {
@@ -369,6 +440,21 @@ describe("/api", () => {
               });
           });
         });
+        describe("INVALID METHODS", () => {
+          it("responds with status 405 for invalid methods", () => {
+            const invalidMethods = ["put", "delete", "patch"];
+            const methodPromises = invalidMethods.map(method => {
+              return request(app)
+                [method]("/api/articles/1/comments")
+                .expect(405)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal("method not allowed");
+                });
+            });
+            // methodPromises -> [ Promise { <pending> }, Promise { <pending> }, Promise { <pending> } ]
+            return Promise.all(methodPromises);
+          });
+        });
       });
     });
   });
@@ -421,6 +507,21 @@ describe("/api", () => {
               .delete("/api/comments/100")
               .expect(404);
           });
+        });
+      });
+      describe("INVALID METHODS", () => {
+        it("responds with status 405 for invalid methods", () => {
+          const invalidMethods = ["put", "post", "get"];
+          const methodPromises = invalidMethods.map(method => {
+            return request(app)
+              [method]("/api/comments/'1")
+              .expect(405)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("method not allowed");
+              });
+          });
+          // methodPromises -> [ Promise { <pending> }, Promise { <pending> }, Promise { <pending> } ]
+          return Promise.all(methodPromises);
         });
       });
     });
