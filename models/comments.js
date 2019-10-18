@@ -1,8 +1,12 @@
 const connection = require("../db/connection");
 
-exports.selectCommentsByArticleId = (id, sortBy = "comments_id", order) => {
+exports.selectCommentsByArticleId = (
+  id,
+  sortBy = "created_at",
+  order = "desc"
+) => {
   return connection
-    .select("*")
+    .select("author", "body", "comment_id", "created_at", "votes")
     .from("comments")
     .where("article_id", id)
     .orderBy(sortBy, order);
@@ -10,14 +14,14 @@ exports.selectCommentsByArticleId = (id, sortBy = "comments_id", order) => {
 
 exports.updateComment = (commentsId, incVotes) => {
   return connection("comments")
-    .where("comments.comments_id", "=", commentsId)
+    .where("comments.comment_id", "=", commentsId)
     .increment("votes", incVotes)
     .returning("*");
 };
 
 exports.removeComment = commentsId => {
   return connection("comments")
-    .where("comments_id", commentsId)
+    .where("comment_id", commentsId)
     .del();
 };
 exports.insertComment = body => {

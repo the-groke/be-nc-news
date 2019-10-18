@@ -15,10 +15,7 @@ exports.getArticle = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const sortBy = req.query.sort_by;
-  const order = req.query.order;
-  const author = req.query.author;
-  const topic = req.query.topic;
+  const { sort_by, order, author, topic } = req.query;
 
   validQueries = ["sort_by", "order", "author", "topic"];
 
@@ -30,14 +27,12 @@ exports.getArticles = (req, res, next) => {
   //   }
   // }
 
-  selectAllArticles(sortBy, order, author, topic)
+  selectAllArticles(sort_by, order, author, topic)
     .then(articles => {
       if (order) {
         if (order !== "asc" && order !== "desc")
           return Promise.reject({ status: 400, msg: "bad request" });
       }
-      // if (req.query) console.log(req.query);
-
       if (articles.length === 0) {
         return Promise.reject({ status: 404, msg: "article does not exist" });
       } else res.status(200).send({ articles });
@@ -51,9 +46,7 @@ exports.patchArticle = (req, res, next) => {
 
   updateArticle(articleId, incVotes)
     .then(article => {
-      if (req.body && !incVotes) {
-        return Promise.reject({ status: 400, msg: "bad request" });
-      }
+      if (!incVotes) return Promise.reject({ status: 400, msg: "bad request" });
 
       if (article.length === 0) {
         return Promise.reject({ status: 404, msg: "article does not exist" });

@@ -33,7 +33,7 @@ exports.selectAllArticles = (
     });
 };
 
-exports.updateArticle = (articleId, incVotes) => {
+exports.updateArticle = (articleId, incVotes = 0) => {
   return connection("articles")
     .where("articles.article_id", "=", articleId)
     .increment("votes", incVotes)

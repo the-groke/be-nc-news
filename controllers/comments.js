@@ -18,17 +18,18 @@ const renameKeys = (arr, keyToChange, newKey) => {
 
 exports.getComments = (req, res, next) => {
   const id = req.params.article_id;
-  const sortBy = req.query.sort_by;
-  const order = req.query.order;
+  const { sort_by, order } = req.query;
 
-  selectCommentsByArticleId(id, sortBy, order)
+  selectCommentsByArticleId(id, sort_by, order)
     .then(comments => {
+      if (comments.length === 0)
+        return Promise.reject({ status: 404, msg: "not found" });
+
       if (order) {
         if (order !== "asc" && order !== "desc")
           return Promise.reject({ status: 400, msg: "bad request" });
       }
-      authorToUsername = renameKeys(comments, "author", "username");
-      res.status(200).send({ comments: authorToUsername });
+      res.status(200).send({ comments });
     })
     .catch(next);
 };
@@ -39,9 +40,6 @@ exports.patchComment = (req, res, next) => {
 
   updateComment(commentsId, incVotes)
     .then(comment => {
-      if (req.body && !incVotes) {
-        return Promise.reject({ status: 400, msg: "bad request" });
-      }
       if (comment.length === 0) {
         return Promise.reject({ status: 404, msg: "comment does not exist" });
       } else {
@@ -54,7 +52,10 @@ exports.patchComment = (req, res, next) => {
 exports.deleteComment = (req, res, next) => {
   const commentId = req.params.comment_id;
   removeComment(commentId)
-    .then(() => {
+    .then(comment => {
+      if (comment === 0)
+        return Promise.reject({ status: 404, msg: "not found" });
+
       res.status(204).send();
     })
     .catch(next);
@@ -65,6 +66,7 @@ exports.postComment = (req, res, next) => {
   const articleId = req.params.article_id;
   bodyClone.article_id = articleId;
   bodyClone2 = renameKeys([bodyClone], "username", "author");
+
   insertComment(...bodyClone2)
     .then(comment => {
       res.status(201).send({ comment: comment[0] });
