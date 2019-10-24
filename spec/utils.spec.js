@@ -319,6 +319,6 @@ describe("formatComments", () => {
     ];
     const output = formatComments(comments, refObj);
     expect(output).to.not.equal(comments);
-    expect(output[0]).to.not.equal(comments[0]);
+    expect(comments[0].belongs_to).to.equal("A");
   });
 });

@@ -5,6 +5,8 @@ const {
   insertComment
 } = require("../models/comments");
 
+const { checkIfArticleExists } = require("../models/articles");
+
 const renameKeys = (arr, keyToChange, newKey) => {
   return arr.map(obj => {
     const newObj = {};
@@ -20,12 +22,19 @@ exports.getComments = (req, res, next) => {
   const id = req.params.article_id;
   const { sort_by, order } = req.query;
 
-  selectCommentsByArticleId(id, sort_by, order)
-    .then(comments => {
+  Promise.all([
+    checkIfArticleExists(id),
+    selectCommentsByArticleId(id, sort_by, order)
+  ])
+    .then(([article, comments]) => {
       if (order) {
         if (order !== "asc" && order !== "desc")
           return Promise.reject({ status: 400, msg: "bad request" });
       }
+      if (article.length === 0) {
+        return Promise.reject({ status: 404, msg: "not found" });
+      }
+
       res.status(200).send({ comments });
     })
     .catch(next);

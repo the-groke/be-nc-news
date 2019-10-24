@@ -16,6 +16,13 @@ exports.selectArticleById = articleId => {
     .where("articles.article_id", "=", articleId);
 };
 
+exports.checkIfArticleExists = articleId => {
+  return connection
+    .select("*")
+    .from("articles")
+    .where("articles.article_id", "=", articleId);
+};
+
 exports.selectAllArticles = (
   sortBy = "created_at",
   order = "desc",
