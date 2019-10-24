@@ -15,6 +15,16 @@ describe("/api", () => {
       .get("/api/kjshdfgids")
       .expect(404);
   });
+  describe("DELETE", () => {
+    it("returns 405", () => {
+      return request(app)
+        .del("/api")
+        .expect(405)
+        .then(({ body }) => {
+          expect(body.msg).to.equal("method not allowed");
+        });
+    });
+  });
 
   describe("/topics", () => {
     describe("GET", () => {
@@ -301,10 +311,20 @@ describe("/api", () => {
               .send({ inc_votes: 1 })
               .expect(200)
               .then(({ body: { article } }) => {
-                expect(article[0].votes).to.equal(101);
+                expect(article.votes).to.equal(101);
+              });
+          });
+          it("responds with 200 and unchanged article when given empty body", () => {
+            return request(app)
+              .patch("/api/articles/1")
+              .send({})
+              .expect(200)
+              .then(({ body: { article } }) => {
+                expect(article.votes).to.equal(100);
               });
           });
         });
+
         describe(":(", () => {
           it("responds with 404 when attempting to update non-existant article", () => {
             return request(app)
@@ -317,15 +337,6 @@ describe("/api", () => {
               .patch("/api/articles/1")
               .send({ inc_votes: "hello" })
               .expect(400);
-          });
-          it("responds with 400 when given non-existing column", () => {
-            return request(app)
-              .patch("/api/articles/1")
-              .send({ pizza: 1 })
-              .expect(400)
-              .then(({ body }) => {
-                expect(body.msg).to.equal("bad request");
-              });
           });
         });
       });
@@ -434,6 +445,14 @@ describe("/api", () => {
                   });
                 });
             });
+            it("returns 200 when article exists but has no comments", () => {
+              return request(app)
+                .get("/api/articles/2/comments")
+                .expect(200)
+                .then(({ body: { comments } }) => {
+                  expect(comments).to.eql([]);
+                });
+            });
           });
           describe(":(", () => {
             it("returns 404 when requests comments for valid but non-existant article", () => {
@@ -444,6 +463,7 @@ describe("/api", () => {
                   expect(body.msg).to.equal("not found");
                 });
             });
+
             it("responds with 404 when sorted by invalid column", () => {
               return request(app)
                 .get("/api/articles/1/comments?sort_by=pizza")
@@ -490,7 +510,16 @@ describe("/api", () => {
               .send({ inc_votes: 1 })
               .expect(200)
               .then(({ body: { comment } }) => {
-                expect(comment[0].votes).to.equal(17);
+                expect(comment.votes).to.equal(17);
+              });
+          });
+          it("responds with status 200 and unchanged comment when given no body", () => {
+            return request(app)
+              .patch("/api/comments/1")
+              .send({})
+              .expect(200)
+              .then(({ body }) => {
+                expect(body.comment.votes).to.equal(16);
               });
           });
         });

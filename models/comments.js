@@ -12,7 +12,7 @@ exports.selectCommentsByArticleId = (
     .orderBy(sortBy, order);
 };
 
-exports.updateComment = (commentsId, incVotes) => {
+exports.updateComment = (commentsId, incVotes = 0) => {
   return connection("comments")
     .where("comments.comment_id", "=", commentsId)
     .increment("votes", incVotes)
