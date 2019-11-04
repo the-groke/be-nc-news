@@ -1,27 +1,25 @@
 {
-  "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
+  "/topics": {
+    "get": "responds with an aray of topics on key of topics"
   },
-  "GET /api/topics": {
-    "description": "serves an array of all topics",
-    "queries": [],
-    "exampleResponse": {
-      "topics": [{ "slug": "football", "description": "Footie!" }]
+  "/users": {
+    ":username": "responds with requested user object on the key of user"
+  },
+  "/articles": {
+    "get": "responds with arrays of articles on key of articles",
+    "/:article_id": {
+      "get": "responds with requested article on key of article",
+      "patch": "receives request on body to increment or decrement the value of votes by 1 eg. \"{inc_votes: 1}\", updates vote count on article and responds with updated article object on key of article",
+      "/comments": {
+        "post": "receives request on body of comment and username eg. \"{ username: \"rogersop\", body: \"hello\" }\" and responds with comment object on key of comment",
+        "get": "responds with array of comments on article on key of comments"
+      }
     }
   },
-  "GET /api/articles": {
-    "description": "serves an array of all topics",
-    "queries": ["author", "topic", "sort_by", "order"],
-    "exampleResponse": {
-      "articles": [
-        {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": 1527695953341
-        }
-      ]
+  "/comments": {
+    "/:comment_id": {
+      "patch": "receives request on body to increment or decrement value of votes by 1 eg. \"{ inc_votes: 1 }\", updates vote count on comment and responds with updated comment on key of comment",
+      "delete": "responds with status 204"
     }
   }
 }
