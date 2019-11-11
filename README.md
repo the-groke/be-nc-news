@@ -1,87 +1,53 @@
 # NC News
 
-One Paragraph of project description goes here
+This Northcoders News API was created as part of the backend module for Northcoders Developer Pathway Bootcamp which can be accessed [here](https://ben-rut-nc-news.herokuapp.com/api) via Heroku.
 
-## Getting Started
+The link above gives a list of all the available endpoints on the API and how to access them.
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+## Installation
 
-### Prerequisites
+Alternatively, to run the API locally on your computer, first download the repo and install the dependencies:
 
-What things you need to install the software and how to install them
-
-```
-Give examples
+```bash
+npm i
 ```
 
-### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
+```js
+“dependencies”: {
+    “cors”: “^2.8.5”,
+    "express": "^4.17.1",
+    "knex": "^0.19.5",
+    "pg": "^7.12.1"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-sorted": "^0.2.0",
+    "mocha": "^6.2.1",
+    "supertest": "^4.0.2"
+  }
 ```
 
-### And coding style tests
+Then set up the database:
 
-Explain what these tests test and why
-
+```bash
+npm run setup-dbs
+npm run migrate-latest
+npm run seed
 ```
-Give an example
+
+The API can be viewed in your preferred browser on  
+[localhost:9090/api](localhost:9090/api) after running
+
+```bash
+npm start
 ```
 
-## Deployment
+## Testing
 
-Add additional notes about how to deploy this on a live system
+To view the tests on the available endpoints, run:
 
-## Built With
+```bash
+npm t
+```
 
-- [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-- [Maven](https://maven.apache.org/) - Dependency Management
-- [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
-
-## Authors
-
-- **Billie Thompson** - _Initial work_ - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-- Hat tip to anyone whose code was used
-- Inspiration
-- etc
+This will display a list of the tests broken down by endpoint, happy paths and sad paths.
